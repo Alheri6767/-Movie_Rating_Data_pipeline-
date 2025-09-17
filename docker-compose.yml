@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:16
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 5925
+      POSTGRES_DB: ETL
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ETL"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  preprocessing:
+    build: .
+    container_name: preprocessing_app
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    command: [ "cron", "-f" ]
+
+volumes:
+  postgres_data:

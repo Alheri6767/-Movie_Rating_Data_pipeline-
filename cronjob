@@ -1,0 +1,2 @@
+# Run pipeline.sh every day at 2AM
+0 2 * * * /app/run_pipeline.sh >> /var/log/cron.log 2>&1
