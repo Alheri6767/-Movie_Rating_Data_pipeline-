@@ -1,25 +1,14 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[42]:
-
-
+# Data Preprocessing Script for Netflix Dataset
 import pandas as pd
 
 # Step 1: Load raw dataset
 df = pd.read_csv("netflix_titles.csv")
 print(df.head())
-
-
-# In[43]:
-
+print(df.columns.tolist())
 
 # check for missing data on the dataset 
 print(df.isnull().sum())
-
-
-# In[44]:
-
+print(df.info())
 
 # Handling missing data in  netflix dataset
 # Fill missing 'director' and 'cast' with 'Unknown'
@@ -40,11 +29,9 @@ df['rating'] = df['rating'].fillna(df['rating'].mode()[0])
 df['duration'] = df['duration'].fillna("Unknown")
 df = df.where(pd.notnull(df), None)
 
+print(df.isnull().sum())
 
-# In[19]:
-
-
-# ✅ Data Cleaning Before Insert
+# Data Cleaning Before Insert
 
 # 1. Remove spaces from titles
 df['title'] = df['title'].str.strip()
@@ -60,41 +47,15 @@ df = df.where(pd.notnull(df), None)
 
 # 6. Build records safely
 records = [tuple(row) for _, row in df.iterrows()]
-
-print(df.head())
-
-
-
-# In[45]:
-
-
+docker run myfirstpythonapp
 print(df.info())
 print(df.head())
-
-
-# In[46]:
-
 
 #rename column name from cast to casts 
 df.rename(columns={"casts": "cast"}, inplace=True)
 
-
-
-
-# In[47]:
-
-
 print(df.columns.tolist())
-
-
-# In[7]:
-
-
 print(df.head(10))
-
-
-# In[52]:
-
 
 # Ensure 'date_added' is datetime
 df['date_added'] = pd.to_datetime(df['date_added'], errors='coerce')
@@ -102,9 +63,7 @@ df['date_added'] = pd.to_datetime(df['date_added'], errors='coerce')
 # Replace NaT with None for Postgres
 df['date_added'] = df['date_added'].apply(lambda x: None if pd.isna(x) else x)
 
-
-# In[48]:
-
+#  Data Insertion into PostgreSQL
 
 import pandas as pd
 import psycopg2
@@ -138,10 +97,7 @@ conn.commit()
 cur.close()
 conn.close()
 
-print("✅ Data inserted successfully!")
-
-
-# In[49]:
+print("Data inserted successfully!")
 
 
 expected_cols = ["show_id", "type", "title", "director", "casts", "country", 
@@ -150,7 +106,7 @@ expected_cols = ["show_id", "type", "title", "director", "casts", "country",
 print("Match:", list(df.columns) == expected_cols)
 
 
-# In[ ]:
+
 
 
 
